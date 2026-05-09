@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>JUNIOR QC ANALYST – Multilingual Training Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0c1a2f 0%, #071126 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .game-header {
+            background: #0a1c2f;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .game-title h2 {
+            color: white;
+            font-size: 1.5rem;
+            letter-spacing: -0.3px;
+            font-weight: 800;
+        }
+        .credit-line {
+            font-size: 0.7rem;
+            color: #bfd9ff;
+            font-style: italic;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 8px;
+            background: #071126aa;
+            padding: 6px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .lang-btn.active {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        .score-board {
+            background: #00000066;
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 6px 20px;
+            color: white;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .trainee-badge {
+            background: #e94560;
+            border-radius: 40px;
+            padding: 5px 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .game-body {
+            padding: 28px 30px 32px;
+        }
+
+        .name-screen {
+            text-align: center;
+            padding: 20px 10px;
+        }
+        .name-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+        }
+        .name-input-group input {
+            padding: 14px 22px;
+            font-size: 1rem;
+            width: 260px;
+            border: 2px solid #cddfe7;
+            border-radius: 60px;
+            text-align: center;
+        }
+        .start-btn {
+            background: #0f3460;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 32px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .start-btn:hover { background: #e94560; }
+
+        .scenario-card {
+            background: #f4f8fe;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border-left: 8px solid #e94560;
+            margin-bottom: 24px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .option-btn {
+            background: #f0f2f5;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 12px 18px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: #e2e8f0;
+            transform: translateX(4px);
+        }
+
+        .feedback-panel {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 12px 0;
+            display: none;
+            border-left: 5px solid;
+        }
+        .feedback-correct { display: block; background: #e6f9ed; border-left-color: #2e7d32; }
+        .feedback-wrong { display: block; background: #fff0f0; border-left-color: #c62828; }
+        .doc-ref {
+            font-family: monospace;
+            background: #eef2ff;
+            padding: 6px 10px;
+            border-radius: 14px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+        .btn-next {
+            background: #0f3460;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 260px;
+            display: block;
+            margin: 16px auto 0;
+            cursor: pointer;
+        }
+        .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result-area { text-align: center; padding: 20px; }
+        .restart-btn {
+            background: #e94560;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .score-summary {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 28px;
+            margin-top: 20px;
+        }
+        .game-footer {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #6c7a8e;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+            .game-body { padding: 20px 16px; }
+            .game-header { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+<div id="gameRoot"></div>
+
+<script>
+    // --------------------------------------------------------------
+    //  MULTILINGUAL CONTENT: EN / NL / FR
+    //  Based on official QC documents (Red/Yellow/Blue cards, Workflow, Phrasebook)
+    // --------------------------------------------------------------
+    const TRANSLATIONS = {
+        en: {
+            appTitle: "JUNIOR QC ANALYST",
+            credit: "made By Ramzi and His Loyal Friend DeepSeek",
+            enterName: "📋 Enter your name to begin",
+            namePlaceholder: "e.g., Ramzi, Maria",
+            startBtn: "▶ START ROUND (20 questions)",
+            scorePrefix: "Score",
+            traineeLabel: "👤",
+            submitBtn: "✅ SUBMIT ANSWER",
+            nextBtn: "➡ NEXT QUESTION",
+            finishBtn: "🏁 FINISH ROUND",
+            newRound: "⟳ NEW ROUND (20 questions)",
+            correctFeedback: "✅ CORRECT!",
+            wrongFeedback: "❌ WRONG ANSWER",
+            yourChoice: "Your choice",
+            correctAnswer: "Correct answer",
+            passMsg: "✅ QUALIFIED (PASS)",
+            failMsg: "⚠️ NEEDS FURTHER REVIEW",
+            finalScoreMsg: "had a score of",
+            upTo: "up to"
+        },
+        nl: {
+            appTitle: "JUNIOR QC ANALYST",
+            credit: "gemaakt door Ramzi en zijn loyale vriend DeepSeek",
+            enterName: "📋 Voer je naam in om te beginnen",
+            namePlaceholder: "bijv. Ramzi, Maria",
+            startBtn: "▶ START RONDE (20 vragen)",
+            scorePrefix: "Score",
+            traineeLabel: "👤",
+            submitBtn: "✅ ANTWOORD INDIENEN",
+            nextBtn: "➡ VOLGENDE VRAAG",
+            finishBtn: "🏁 RONDE VOLTOOIEN",
+            newRound: "⟳ NIEUWE RONDE (20 vragen)",
+            correctFeedback: "✅ JUIST!",
+            wrongFeedback: "❌ FOUT ANTWOORD",
+            yourChoice: "Jouw keuze",
+            correctAnswer: "Juiste antwoord",
+            passMsg: "✅ GESLAAGD (PASS)",
+            failMsg: "⚠️ VERDER BESTUDEREN NODIG",
+            finalScoreMsg: "heeft een score van",
+            upTo: "op"
+        },
+        fr: {
+            appTitle: "JUNIOR QC ANALYST",
+            credit: "créé par Ramzi et son fidèle ami DeepSeek",
+            enterName: "📋 Entrez votre nom pour commencer",
+            namePlaceholder: "ex: Ramzi, Maria",
+            startBtn: "▶ COMMENCER (20 questions)",
+            scorePrefix: "Score",
+            traineeLabel: "👤",
+            submitBtn: "✅ VALIDER LA RÉPONSE",
+            nextBtn: "➡ QUESTION SUIVANTE",
+            finishBtn: "🏁 TERMINER LE TOUR",
+            newRound: "⟳ NOUVEAU TOUR (20 questions)",
+            correctFeedback: "✅ CORRECT !",
+            wrongFeedback: "❌ MAUVAISE RÉPONSE",
+            yourChoice: "Votre choix",
+            correctAnswer: "Bonne réponse",
+            passMsg: "✅ QUALIFIÉ (RÉUSSI)",
+            failMsg: "⚠️ NÉCESSITE RÉVISION",
+            finalScoreMsg: "a obtenu un score de",
+            upTo: "sur"
+        }
+    };
+
+    // -------- 20 QUESTIONS (ENGLISH BASE) --------
+    const QUESTIONS_EN = [
+        { text: "Agent tells customer: 'You can go complain on Trustpilot, I don't care.' What card applies?", options: ["Red Card – guiding external complaint", "Yellow Card – poor attitude", "Blue Card – wrong closing", "No violation"], correct: 0, explanation: "RC 1.6: Actively encouraging external complaint. RED CARD.", docRef: "Red Card 1.6 – p.4-5" },
+        { text: "Customer asks for agent's ID. Agent refuses: 'That's private, I won't tell you'.", options: ["Yellow Card – refusing agent ID", "Red Card – privacy breach", "Blue Card – minor error", "Correct behaviour"], correct: 0, explanation: "CC 2.4.1: Refusing to provide agent ID. YELLOW CARD.", docRef: "Yellow Card 2.4.1 – p.7-8" },
+        { text: "Agent doesn't respond for 22 seconds (no 'please wait' or interaction). Which card?", options: ["Red Card – ignoring customer", "Yellow Card – empty field >15s no interaction", "Blue Card – slow response", "No violation"], correct: 1, explanation: "CC 2.3.1: No interaction >15 seconds. YELLOW CARD.", docRef: "Yellow Card 2.3.1 – p.7" },
+        { text: "Agent says: 'GOFO products are terrible, you're right.' What violation?", options: ["Red Card – malicious comments about GOFO", "Yellow Card – lack of empathy", "Blue Card – phrasebook error", "No issue"], correct: 0, explanation: "RC 1.4.1: Malicious comments about GOFO. RED CARD.", docRef: "Red Card 1.4.1 – p.3" },
+        { text: "Agent uses internal term 'BPO' with customer. According to quality rules?", options: ["Yellow Card – internal banned term", "Red Card – leaking info", "Blue Card – not a violation", "Allowed if customer works in logistics"], correct: 0, explanation: "CC 2.5.1: Internal jargon not understood by customer. YELLOW CARD.", docRef: "Yellow Card 2.5.1 – p.8" },
+        { text: "POD is valid (photo correct address/package). Customer WAS home but claims not received. Correct Phrasebook action?", options: ["File lost claim immediately", "Advise customer to contact seller (GOFO limited action)", "Ask customer to provide proof of absence", "Replace package for free"], correct: 1, explanation: "Situation 5Bb: POD valid, customer home → contact seller.", docRef: "Phrasebook 5Bb" },
+        { text: "Delivery failed because customer was NOT home (POD valid). What does customer need to provide?", options: ["Nothing, package will be returned", "Proof of absence (work receipt, travel ticket)", "Police report", "Signed delivery waiver"], correct: 1, explanation: "Situation 5Ba: Valid POD + not home → proof of absence needed.", docRef: "Phrasebook 5Ba" },
+        { text: "Package has no tracking update for 16 days. Workflow says:", options: ["Wait another week", "Submit urgent investigation", "Advise customer to contact seller (suspected lost)", "Send automatic replacement"], correct: 2, explanation: "Situation 6B: >14 days → suspected lost → contact seller.", docRef: "Workflow + Phrasebook 6B" },
+        { text: "What is the correct Phone opening phrase according to GOFO Phrasebook?", options: ["Hey who is this?", "Good day, you are speaking with Gofo Netherlands. Could you please provide your tracking number?", "GOFO service, what's your problem?", "Hello I need your order number fast"], correct: 1, explanation: "Standard opening: greeting + company + tracking number request.", docRef: "Phrasebook – Opening" },
+        { text: "Agent selects wrong ticket type (e.g. 'damaged' instead of 'lost'). Which violation?", options: ["Red Card", "Yellow Card – process error", "Blue Card – classification error", "No violation if corrected"], correct: 2, explanation: "BC 3.2.1: Wrong ticket classification. BLUE CARD.", docRef: "Blue Card 3.2.1 – p.12" },
+        { text: "Customer is abusive but agent remains neutral and shows understanding. Which phrasebook special situation matches?", options: ["Escalate immediately", "Hang up", "Show understanding, apologize, redirect to facts/process", "Transfer to legal"], correct: 2, explanation: "Emotional customer → calm, understand, redirect.", docRef: "Phrasebook – Emotional/abusive" },
+        { text: "According to scoring standard, how many points for ONE Yellow Card (CC) error?", options: ["-100 (auto-fail)", "-10 and ticket fails", "-50 points", "0 points but written warning"], correct: 1, explanation: "CC error: -10 points and ticket fails.", docRef: "Scoring table p.17" },
+        { text: "Agent shares warehouse address (GOFO facility) with customer. Which card?", options: ["Yellow Card", "Red Card – leaking internal info", "Blue Card – minor infraction", "Allowed if customer insists"], correct: 1, explanation: "RC 1.3.1: Leaking warehouse/DSP info. RED CARD.", docRef: "Red Card 1.3.1 – p.3" },
+        { text: "Customer refuses to provide additional info for investigation. Agent explains need & suggests contacting seller. Is this compliant?", options: ["No, must force customer", "Yes, using phrasebook refusal handling", "No, must accept customer without info", "Only via email"], correct: 1, explanation: "Refusal handling: explain, then offer seller contact.", docRef: "Phrasebook – Refusal handling" },
+        { text: "Customer mentions lawyer / legal action. Correct agent response?", options: ["Stay neutral, no legal commentary, register and forward", "Promise compensation", "End call immediately", "Offer to connect with manager"], correct: 0, explanation: "Neutral, no legal advice, register and forward.", docRef: "Phrasebook – Legal action" },
+        { text: "Delivery failed – address is wrong but CAN be changed (not yet delivered). What does workflow require?", options: ["Tell customer impossible", "Return to sender", "Update address in system and redeliver within 1-3 business days", "Ask customer to wait 10 days"], correct: 2, explanation: "Situation 4D: correctable address → update + redelivery 1-3 days.", docRef: "Workflow 4D" },
+        { text: "Agent uses phrase 'world-class service' and 'number one in Europe'. Which card?", options: ["Yellow Card – extreme/absolute banned terms", "Blue Card – minor exaggeration", "Red Card – fraud", "No violation"], correct: 0, explanation: "CC 2.5.2: Extreme/absolute forbidden terms.", docRef: "Yellow Card 2.5.2 – p.9" },
+        { text: "According to Blue Card section, missing to use standard closing formula is:", options: ["Yellow Card – minor", "Blue Card – wrong closing", "Red Card", "Only internal warning"], correct: 1, explanation: "BC 3.1.1: Incorrect opening/closing → BLUE CARD.", docRef: "Blue Card 3.1.1 – p.12" },
+        { text: "Customer wants to apply for compensation (lost package). Procedure says:", options: ["Immediately issue refund", "Advise contact seller first + provide loss declaration if seller fails", "Open police case", "Refuse any compensation"], correct: 1, explanation: "Situation 7: first seller, then loss declaration.", docRef: "Phrasebook Situation 7" },
+        { text: "Customer was home, but courier marked 'attempted - not home'. Agent confirms customer was home. What next?", options: ["Close ticket", "Start investigation, redelivery within 1-3 days + apology", "Tell customer to pick up at depot", "Ask for signature"], correct: 1, explanation: "Situation 4B: investigation + redelivery + apology.", docRef: "Phrasebook 4B" }
+    ];
+
+    // -------- DUTCH TRANSLATION (NL) --------
+    const QUESTIONS_NL = QUESTIONS_EN.map(q => {
+        const nlTexts = {
+            "Agent tells customer: 'You can go complain on Trustpilot, I don't care.' What card applies?": "Agent zegt tegen klant: 'Je kunt gaan klagen op Trustpilot, het kan me niet schelen.' Welke kaart is van toepassing?",
+            "Customer asks for agent's ID. Agent refuses: 'That's private, I won't tell you'.": "Klant vraagt om medewerkersnummer. Agent weigert: 'Dat is privé, geef ik niet.'",
+            "Agent doesn't respond for 22 seconds (no 'please wait' or interaction). Which card?": "Agent reageert 22 seconden niet (geen 'even geduld aub'). Welke kaart?",
+            "Agent says: 'GOFO products are terrible, you're right.' What violation?": "Agent zegt: 'GOFO-producten zijn verschrikkelijk, je hebt gelijk.' Welke overtreding?",
+            "Agent uses internal term 'BPO' with customer. According to quality rules?": "Agent gebruikt interne term 'BPO' tegen klant. Volgens kwaliteitsregels?",
+            "POD is valid (photo correct address/package). Customer WAS home but claims not received. Correct Phrasebook action?": "POD is geldig (foto correct adres/pakket). Klant WAS thuis maar beweert niet ontvangen. Juiste Phrasebook-actie?",
+            "Delivery failed because customer was NOT home (POD valid). What does customer need to provide?": "Levering mislukt omdat klant NIET thuis was (POD geldig). Wat moet klant leveren?",
+            "Package has no tracking update for 16 days. Workflow says:": "Pakket heeft 16 dagen geen tracking-update. Workflow zegt:",
+            "What is the correct Phone opening phrase according to GOFO Phrasebook?": "Wat is de juiste telefoon openingszin volgens GOFO Phrasebook?",
+            "Agent selects wrong ticket type (e.g. 'damaged' instead of 'lost'). Which violation?": "Agent selecteert verkeerd tickettype (bijv. 'beschadigd' i.p.v. 'verloren'). Welke overtreding?",
+            "Customer is abusive but agent remains neutral and shows understanding. Which phrasebook special situation matches?": "Klant is beledigend maar agent blijft neutraal en toont begrip. Welke speciale situatie uit phrasebook?",
+            "According to scoring standard, how many points for ONE Yellow Card (CC) error?": "Volgens scoringsstandaard, hoeveel punten voor één Yellow Card (CC) fout?",
+            "Agent shares warehouse address (GOFO facility) with customer. Which card?": "Agent deelt magazijnadres (GOFO) met klant. Welke kaart?",
+            "Customer refuses to provide additional info for investigation. Agent explains need & suggests contacting seller. Is this compliant?": "Klant weigert extra info voor onderzoek. Agent legt uit en stelt contact met verkoper voor. Conform?",
+            "Customer mentions lawyer / legal action. Correct agent response?": "Klant noemt advocaat / juridische stappen. Juiste reactie agent?",
+            "Delivery failed – address is wrong but CAN be changed (not yet delivered). What does workflow require?": "Levering mislukt – adres is fout maar KAN gewijzigd worden (nog niet geleverd). Wat vereist workflow?",
+            "Agent uses phrase 'world-class service' and 'number one in Europe'. Which card?": "Agent gebruikt zin 'wereldklasse service' en 'nummer één in Europa'. Welke kaart?",
+            "According to Blue Card section, missing to use standard closing formula is:": "Volgens Blue Card, het missen van standaard afsluiting is:",
+            "Customer wants to apply for compensation (lost package). Procedure says:": "Klant wil compensatie (verloren pakket). Procedure zegt:",
+            "Customer was home, but courier marked 'attempted - not home'. Agent confirms customer was home. What next?": "Klant was thuis, maar koerier markeerde 'poging gedaan - niet thuis'. Agent bevestigt klant was thuis. Wat nu?"
+        };
+        const nlOpts = q.options.map(opt => {
+            const map = {
+                "Red Card – guiding external complaint": "Rode Kaart – externe klacht aanmoedigen",
+                "Yellow Card – poor attitude": "Gele Kaart – slechte houding",
+                "Blue Card – wrong closing": "Blauwe Kaart – verkeerde afsluiting",
+                "No violation": "Geen overtreding",
+                "Yellow Card – refusing agent ID": "Gele Kaart – weigeren medewerkersnummer",
+                "Red Card – privacy breach": "Rode Kaart – privacyschending",
+                "Blue Card – minor error": "Blauwe Kaart – kleine fout",
+                "Correct behaviour": "Correct gedrag",
+                "Red Card – ignoring customer": "Rode Kaart – negeren klant",
+                "Yellow Card – empty field >15s no interaction": "Gele Kaart – leeg veld >15s geen interactie",
+                "Blue Card – slow response": "Blauwe Kaart – trage reactie",
+                "Red Card – malicious comments about GOFO": "Rode Kaart – kwaadaardige opmerkingen over GOFO",
+                "Yellow Card – lack of empathy": "Gele Kaart – gebrek aan empathie",
+                "Blue Card – phrasebook error": "Blauwe Kaart – phrasebook fout",
+                "No issue": "Geen probleem",
+                "Yellow Card – internal banned term": "Gele Kaart – interne verboden term",
+                "Red Card – leaking info": "Rode Kaart – informatie lekken",
+                "Blue Card – not a violation": "Blauwe Kaart – geen overtreding",
+                "Allowed if customer works in logistics": "Toegestaan als klant in logistiek werkt",
+                "File lost claim immediately": "Verloren claim direct indienen",
+                "Advise customer to contact seller (GOFO limited action)": "Adviseren contact op te nemen met verkoper (beperkte actie GOFO)",
+                "Ask customer to provide proof of absence": "Bewijs van afwezigheid vragen",
+                "Replace package for free": "Pakket gratis vervangen",
+                "Nothing, package will be returned": "Niets, pakket wordt retour gestuurd",
+                "Proof of absence (work receipt, travel ticket)": "Bewijs van afwezigheid (werkbon, reisticket)",
+                "Police report": "Politierapport",
+                "Signed delivery waiver": "Ondertekende leveringsvrijgave",
+                "Wait another week": "Nog een week wachten",
+                "Submit urgent investigation": "Dringend onderzoek indienen",
+                "Advise customer to contact seller (suspected lost)": "Adviseren contact op te nemen met verkoper (vermoedelijk verloren)",
+                "Send automatic replacement": "Automatische vervanging sturen",
+                "Hey who is this?": "Hey wie is dit?",
+                "Good day, you are speaking with Gofo Netherlands. Could you please provide your tracking number?": "Goedendag, u spreekt met Gofo Netherlands. Kunt u uw trackingnummer geven?",
+                "GOFO service, what's your problem?": "GOFO service, wat is uw probleem?",
+                "Hello I need your order number fast": "Hallo ik heb snel uw ordernummer nodig",
+                "Red Card": "Rode Kaart",
+                "Yellow Card – process error": "Gele Kaart – procesfout",
+                "Blue Card – classification error": "Blauwe Kaart – classificatiefout",
+                "No violation if corrected": "Geen overtreding indien gecorrigeerd",
+                "Escalate immediately": "Direct escaleren",
+                "Hang up": "Ophangen",
+                "Show understanding, apologize, redirect to facts/process": "Begrip tonen, verontschuldigen, terug naar feiten/proces",
+                "Transfer to legal": "Doorverbinden naar juridisch",
+                "-100 (auto-fail)": "-100 (automatisch zakken)",
+                "-10 and ticket fails": "-10 en ticket faalt",
+                "-50 points": "-50 punten",
+                "0 points but written warning": "0 punten maar schriftelijke waarschuwing",
+                "Yellow Card": "Gele Kaart",
+                "Red Card – leaking internal info": "Rode Kaart – interne info lekken",
+                "Blue Card – minor infraction": "Blauwe Kaart – kleine overtreding",
+                "Allowed if customer insists": "Toegestaan als klant aandringt",
+                "No, must force customer": "Nee, klant dwingen",
+                "Yes, using phrasebook refusal handling": "Ja, volgens phrasebook weigering afhandeling",
+                "No, must accept customer without info": "Nee, klant accepteren zonder info",
+                "Only via email": "Alleen via e-mail",
+                "Stay neutral, no legal commentary, register and forward": "Neutraal blijven, geen juridisch commentaar, registreren en doorsturen",
+                "Promise compensation": "Compensatie beloven",
+                "End call immediately": "Gesprek direct beëindigen",
+                "Offer to connect with manager": "Aanbieden door te verbinden met manager",
+                "Tell customer impossible": "Klant vertellen onmogelijk",
+                "Return to sender": "Retour afzender",
+                "Update address in system and redeliver within 1-3 business days": "Adres updaten in systeem en herleveren binnen 1-3 werkdagen",
+                "Ask customer to wait 10 days": "Klant vragen 10 dagen te wachten",
+                "Yellow Card – extreme/absolute banned terms": "Gele Kaart – extreme/absolute verboden termen",
+                "Blue Card – minor exaggeration": "Blauwe Kaart – lichte overdrijving",
+                "Red Card – fraud": "Rode Kaart – fraude",
+                "Yellow Card – minor": "Gele Kaart – klein",
+                "Blue Card – wrong closing": "Blauwe Kaart – verkeerde afsluiting",
+                "Only internal warning": "Alleen interne waarschuwing",
+                "Immediately issue refund": "Direct terugbetaling uitvoeren",
+                "Advise contact seller first + provide loss declaration if seller fails": "Adviseren eerst verkoper te contacteren + verklaring van verlies als verkoper faalt",
+                "Open police case": "Politiezaak openen",
+                "Refuse any compensation": "Alle compensatie weigeren",
+                "Close ticket": "Ticket sluiten",
+                "Start investigation, redelivery within 1-3 days + apology": "Onderzoek starten, herlevering binnen 1-3 dagen + excuses",
+                "Tell customer to pick up at depot": "Klant vertellen op te halen bij depot",
+                "Ask for signature": "Handtekening vragen"
+            };
+            return map[opt] || opt;
+        });
+        return {
+            text: nlTexts[q.text] || q.text,
+            options: nlOpts,
+            correct: q.correct,
+            explanation: q.explanation,
+            docRef: q.docRef
+        };
+    });
+
+    // -------- FRENCH TRANSLATION (FR) --------
+    const QUESTIONS_FR = QUESTIONS_EN.map(q => {
+        const frTexts = {
+            "Agent tells customer: 'You can go complain on Trustpilot, I don't care.' What card applies?": "L'agent dit au client : 'Vous pouvez aller vous plaindre sur Trustpilot, je m'en fiche.' Quelle carte s'applique ?",
+            "Customer asks for agent's ID. Agent refuses: 'That's private, I won't tell you'.": "Le client demande l'identifiant de l'agent. L'agent refuse : 'C'est privé, je ne vous le dirai pas.'",
+            "Agent doesn't respond for 22 seconds (no 'please wait' or interaction). Which card?": "L'agent ne répond pas pendant 22 secondes (pas de 'patientez' ni d'interaction). Quelle carte ?",
+            "Agent says: 'GOFO products are terrible, you're right.' What violation?": "L'agent dit : 'Les produits GOFO sont terribles, vous avez raison.' Quelle infraction ?",
+            "Agent uses internal term 'BPO' with customer. According to quality rules?": "L'agent utilise le terme interne 'BPO' avec le client. Selon les règles qualité ?",
+            "POD is valid (photo correct address/package). Customer WAS home but claims not received. Correct Phrasebook action?": "Le POD est valide (photo adresse/colis correcte). Le client ÉTAIT chez lui mais dit ne pas avoir reçu. Bonne action Phrasebook ?",
+            "Delivery failed because customer was NOT home (POD valid). What does customer need to provide?": "Livraison échouée car le client n'ÉTAIT PAS chez lui (POD valide). Que doit fournir le client ?",
+            "Package has no tracking update for 16 days. Workflow says:": "Colis sans mise à jour de suivi depuis 16 jours. Workflow dit :",
+            "What is the correct Phone opening phrase according to GOFO Phrasebook?": "Quelle est la phrase d'ouverture téléphonique correcte selon le Phrasebook GOFO ?",
+            "Agent selects wrong ticket type (e.g. 'damaged' instead of 'lost'). Which violation?": "L'agent sélectionne un mauvais type de ticket (ex: 'endommagé' au lieu de 'perdu'). Quelle infraction ?",
+            "Customer is abusive but agent remains neutral and shows understanding. Which phrasebook special situation matches?": "Le client est injurieux mais l'agent reste neutre et montre de la compréhension. Quelle situation spéciale du phrasebook ?",
+            "According to scoring standard, how many points for ONE Yellow Card (CC) error?": "Selon le barème, combien de points pour une erreur Carton Jaune (CC) ?",
+            "Agent shares warehouse address (GOFO facility) with customer. Which card?": "L'agent partage l'adresse de l'entrepôt (GOFO) avec le client. Quelle carte ?",
+            "Customer refuses to provide additional info for investigation. Agent explains need & suggests contacting seller. Is this compliant?": "Le client refuse de fournir des infos supplémentaires pour l'enquête. L'agent explique le besoin et suggère de contacter le vendeur. Est-ce conforme ?",
+            "Customer mentions lawyer / legal action. Correct agent response?": "Le client mentionne un avocat / des poursuites judiciaires. Bonne réponse de l'agent ?",
+            "Delivery failed – address is wrong but CAN be changed (not yet delivered). What does workflow require?": "Livraison échouée – l'adresse est erronée mais PEUT être modifiée (pas encore livré). Que demande le workflow ?",
+            "Agent uses phrase 'world-class service' and 'number one in Europe'. Which card?": "L'agent utilise l'expression 'service de classe mondiale' et 'numéro un en Europe'. Quelle carte ?",
+            "According to Blue Card section, missing to use standard closing formula is:": "Selon la section Carton Bleu, ne pas utiliser la formule de clôture standard est :",
+            "Customer wants to apply for compensation (lost package). Procedure says:": "Le client veut demander une compensation (colis perdu). La procédure dit :",
+            "Customer was home, but courier marked 'attempted - not home'. Agent confirms customer was home. What next?": "Le client était chez lui, mais le livreur a marqué 'tentative - pas chez lui'. L'agent confirme que le client était chez lui. Ensuite ?"
+        };
+        const frOpts = q.options.map(opt => {
+            const map = {
+                "Red Card – guiding external complaint": "Carton Rouge – encouragement plainte externe",
+                "Yellow Card – poor attitude": "Carton Jaune – mauvaise attitude",
+                "Blue Card – wrong closing": "Carton Bleu – mauvaise clôture",
+                "No violation": "Pas d'infraction",
+                "Yellow Card – refusing agent ID": "Carton Jaune – refus identifiant agent",
+                "Red Card – privacy breach": "Carton Rouge – violation vie privée",
+                "Blue Card – minor error": "Carton Bleu – erreur mineure",
+                "Correct behaviour": "Comportement correct",
+                "Red Card – ignoring customer": "Carton Rouge – ignorer client",
+                "Yellow Card – empty field >15s no interaction": "Carton Jaune – vide >15s sans interaction",
+                "Blue Card – slow response": "Carton Bleu – réponse lente",
+                "Red Card – malicious comments about GOFO": "Carton Rouge – commentaires malveillants GOFO",
+                "Yellow Card – lack of empathy": "Carton Jaune – manque d'empathie",
+                "Blue Card – phrasebook error": "Carton Bleu – erreur phrasebook",
+                "No issue": "Pas de problème",
+                "Yellow Card – internal banned term": "Carton Jaune – terme interne interdit",
+                "Red Card – leaking info": "Carton Rouge – fuite d'infos",
+                "Blue Card – not a violation": "Carton Bleu – pas une infraction",
+                "Allowed if customer works in logistics": "Autorisé si client travaille en logistique",
+                "File lost claim immediately": "Déposer réclamation perte immédiate",
+                "Advise customer to contact seller (GOFO limited action)": "Conseiller au client de contacter le vendeur (GOFO action limitée)",
+                "Ask customer to provide proof of absence": "Demander une preuve d'absence",
+                "Replace package for free": "Remplacer le colis gratuitement",
+                "Nothing, package will be returned": "Rien, colis sera retourné",
+                "Proof of absence (work receipt, travel ticket)": "Preuve d'absence (reçu travail, billet)",
+                "Police report": "Dépôt de plainte",
+                "Signed delivery waiver": "Décharge de livraison signée",
+                "Wait another week": "Attendre une semaine de plus",
+                "Submit urgent investigation": "Soumettre enquête urgente",
+                "Advise customer to contact seller (suspected lost)": "Conseiller client de contacter vendeur (perte suspectée)",
+                "Send automatic replacement": "Envoyer remplacement auto",
+                "Hey who is this?": "Bonjour qui est-ce ?",
+                "Good day, you are speaking with Gofo Netherlands. Could you please provide your tracking number?": "Bonjour, vous êtes en ligne avec Gofo Netherlands. Pouvez-vous fournir votre numéro de suivi ?",
+                "GOFO service, what's your problem?": "Service GOFO, quel est votre problème ?",
+                "Hello I need your order number fast": "Bonjour j'ai besoin rapidement de votre numéro de commande",
+                "Red Card": "Carton Rouge",
+                "Yellow Card – process error": "Carton Jaune – erreur processus",
+                "Blue Card – classification error": "Carton Bleu – erreur classification",
+                "No violation if corrected": "Pas d'infraction si corrigé",
+                "Escalate immediately": "Escalader immédiatement",
+                "Hang up": "Raccrocher",
+                "Show understanding, apologize, redirect to facts/process": "Montrer compréhension, s'excuser, recentrer sur faits/processus",
+                "Transfer to legal": "Transférer au juridique",
+                "-100 (auto-fail)": "-100 (échec auto)",
+                "-10 and ticket fails": "-10 et ticket non conforme",
+                "-50 points": "-50 points",
+                "0 points but written warning": "0 point mais avertissement écrit",
+                "Yellow Card": "Carton Jaune",
+                "Red Card – leaking internal info": "Carton Rouge – fuite infos internes",
+                "Blue Card – minor infraction": "Carton Bleu – infraction mineure",
+                "Allowed if customer insists": "Autorisé si client insiste",
+                "No, must force customer": "Non, faut forcer le client",
+                "Yes, using phrasebook refusal handling": "Oui, gestion du refus par phrasebook",
+                "No, must accept customer without info": "Non, faut accepter client sans info",
+                "Only via email": "Uniquement par email",
+                "Stay neutral, no legal commentary, register and forward": "Rester neutre, pas de commentaire juridique, enregistrer et transférer",
+                "Promise compensation": "Promettre une compensation",
+                "End call immediately": "Fin appel immédiat",
+                "Offer to connect with manager": "Proposer de transférer au manager",
+                "Tell customer impossible": "Dire au client impossible",
+                "Return to sender": "Retour à l'expéditeur",
+                "Update address in system and redeliver within 1-3 business days": "Mettre à jour adresse système et relivrer sous 1-3 jours ouvrés",
+                "Ask customer to wait 10 days": "Demander au client d'attendre 10 jours",
+                "Yellow Card – extreme/absolute banned terms": "Carton Jaune – termes extrêmes/absolus interdits",
+                "Blue Card – minor exaggeration": "Carton Bleu – légère exagération",
+                "Red Card – fraud": "Carton Rouge – fraude",
+                "Yellow Card – minor": "Carton Jaune – mineur",
+                "Blue Card – wrong closing": "Carton Bleu – mauvaise clôture",
+                "Only internal warning": "Avertissement interne uniquement",
+                "Immediately issue refund": "Effectuer remboursement immédiat",
+                "Advise contact seller first + provide loss declaration if seller fails": "Conseiller contacter vendeur d'abord + fournir déclaration perte si vendeur échoue",
+                "Open police case": "Ouvrir une enquête police",
+                "Refuse any compensation": "Refuser toute compensation",
+                "Close ticket": "Fermer le ticket",
+                "Start investigation, redelivery within 1-3 days + apology": "Démarrer enquête, relivraison sous 1-3 jours + excuses",
+                "Tell customer to pick up at depot": "Dire au client d'aller au dépôt",
+                "Ask for signature": "Demander signature"
+            };
+            return map[opt] || opt;
+        });
+        return {
+            text: frTexts[q.text] || q.text,
+            options: frOpts,
+            correct: q.correct,
+            explanation: q.explanation,
+            docRef: q.docRef
+        };
+    });
+
+    // ---- Game state ----
+    let currentLang = "en";
+    let currentQuestions = [...QUESTIONS_EN];
+    let traineeName = "";
+    let roundActive = false;
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+    let selectedOpt = null;
+    let roundQuestions = [];
+
+    const root = document.getElementById("gameRoot");
+
+    function getLangText(key) { return TRANSLATIONS[currentLang][key] || key; }
+
+    function renderNameScreen() {
+        root.innerHTML = `
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-title"><h2>${getLangText("appTitle")}</h2><div class="credit-line">${getLangText("credit")}</div></div>
+                    <div class="lang-selector">
+                        <button class="lang-btn ${currentLang === "en" ? "active" : ""}" data-lang="en">🇬🇧 EN</button>
+                        <button class="lang-btn ${currentLang === "nl" ? "active" : ""}" data-lang="nl">🇳🇱 NL</button>
+                        <button class="lang-btn ${currentLang === "fr" ? "active" : ""}" data-lang="fr">🇫🇷 FR</button>
+                    </div>
+                </div>
+                <div class="game-body name-screen">
+                    <h3>${getLangText("enterName")}</h3>
+                    <div class="name-input-group">
+                        <input type="text" id="traineeNameInput" placeholder="${getLangText("namePlaceholder")}">
+                        <button class="start-btn" id="startGameBtn">${getLangText("startBtn")}</button>
+                    </div>
+                    <div class="game-footer">🔴 Red Card • 🟡 Yellow Card • 🔵 Blue Card • Workflow • Phrasebook</div>
+                </div>
+            </div>
+        `;
+        document.querySelectorAll(".lang-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                currentLang = btn.dataset.lang;
+                if (currentLang === "en") currentQuestions = [...QUESTIONS_EN];
+                else if (currentLang === "nl") currentQuestions = [...QUESTIONS_NL];
+                else currentQuestions = [...QUESTIONS_FR];
+                renderNameScreen();
+            });
+        });
+        document.getElementById("startGameBtn").addEventListener("click", () => {
+            let name = document.getElementById("traineeNameInput").value.trim();
+            traineeName = name || "Trainee";
+            roundQuestions = [...currentQuestions];
+            for (let i = roundQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [roundQuestions[i], roundQuestions[j]] = [roundQuestions[j], roundQuestions[i]];
+            }
+            currentIndex = 0; score = 0; answered = false; selectedOpt = null; roundActive = true;
+            renderQuestion();
+        });
+    }
+
+    function renderQuestion() {
+        if (!roundActive || currentIndex >= roundQuestions.length) { finishRound(); return; }
+        const q = roundQuestions[currentIndex];
+        const optsHtml = q.options.map((opt, idx) => `<button class="option-btn" data-opt="${idx}">${String.fromCharCode(65+idx)}. ${escapeHtml(opt)}</button>`).join('');
+        root.innerHTML = `
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-title"><h2>${getLangText("appTitle")}</h2><div class="credit-line">${getLangText("credit")}</div></div>
+                    <div class="trainee-badge">${getLangText("traineeLabel")} ${escapeHtml(traineeName)}</div>
+                    <div class="score-board">⭐ ${score}/${currentIndex}</div>
+                </div>
+                <div class="game-body">
+                    <div class="scenario-card">📌 <strong>${currentIndex+1}/${roundQuestions.length}</strong><br>${escapeHtml(q.text)}</div>
+                    <div class="options-list" id="optsList">${optsHtml}</div>
+                    <div id="fbArea" class="feedback-panel" style="display:none;"></div>
+                    <button class="btn-next" id="nextBtn" disabled>${getLangText("submitBtn")}</button>
+                    <div class="game-footer">🔍 Select an answer, then validate.</div>
+                </div>
+            </div>
+        `;
+        let selected = null;
+        document.querySelectorAll(".option-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (answered) return;
+                document.querySelectorAll(".option-btn").forEach(b => { b.style.background = "#f0f2f5"; });
+                btn.style.background = "#c1e0ff";
+                selected = parseInt(btn.dataset.opt);
+                document.getElementById("nextBtn").disabled = false;
+            });
+        });
+        document.getElementById("nextBtn").addEventListener("click", () => {
+            if (answered || selected === undefined) return;
+            const qq = roundQuestions[currentIndex];
+            const isCorrect = (selected === qq.correct);
+            if (isCorrect) score++;
+            const fbDiv = document.getElementById("fbArea");
+            const correctLetter = String.fromCharCode(65+qq.correct);
+            if (isCorrect) {
+                fbDiv.innerHTML = `<strong>${getLangText("correctFeedback")}</strong><br>${escapeHtml(qq.explanation)}<div class="doc-ref">📄 ${escapeHtml(qq.docRef)}</div>`;
+                fbDiv.className = "feedback-panel feedback-correct";
+            } else {
+                fbDiv.innerHTML = `<strong>${getLangText("wrongFeedback")}</strong><br>${getLangText("yourChoice")}: ${String.fromCharCode(65+selected)}. ${escapeHtml(qq.options[selected])}<br>${getLangText("correctAnswer")}: ${correctLetter}. ${escapeHtml(qq.options[qq.correct])}<br><br>${escapeHtml(qq.explanation)}<div class="doc-ref">📄 ${escapeHtml(qq.docRef)}</div>`;
+                fbDiv.className = "feedback-panel feedback-wrong";
+            }
+            fbDiv.style.display = "block";
+            document.querySelectorAll(".option-btn").forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === qq.correct) { btn.style.background = "#c8f0d1"; }
+                if (!isCorrect && idx === selected && idx !== qq.correct) { btn.style.background = "#ffdddd"; }
+            });
+            answered = true;
+            const nextBtn = document.getElementById("nextBtn");
+            nextBtn.innerText = (currentIndex+1 === roundQuestions.length) ? getLangText("finishBtn") : getLangText("nextBtn");
+            const newNext = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newNext, nextBtn);
+            newNext.addEventListener("click", () => {
+                if (currentIndex+1 >= roundQuestions.length) finishRound();
+                else { currentIndex++; answered = false; selected = undefined; renderQuestion(); }
+            });
+        });
+    }
+
+    function finishRound() {
+        const total = roundQuestions.length;
+        root.innerHTML = `
+            <div class="game-container">
+                <div class="game-header"><div class="game-title"><h2>${getLangText("appTitle")}</h2><div class="credit-line">${getLangText("credit")}</div></div></div>
+                <div class="game-body result-area">
+                    <div class="score-summary">🎯 <strong>${escapeHtml(traineeName)}</strong> ${getLangText("finalScoreMsg")} <strong style="font-size:2rem;">${score}</strong> ${getLangText("upTo")} ${total}.<br>(${score}/${total} · ${Math.round(score/total*100)}%)<br>${score >= 15 ? getLangText("passMsg") : getLangText("failMsg")}</div>
+                    <button class="restart-btn" id="restartBtn">${getLangText("newRound")}</button>
+                </div>
+                <div class="game-footer">JUNIOR QC ANALYST • multilingual</div>
+            </div>
+        `;
+        document.getElementById("restartBtn").addEventListener("click", () => { roundActive = false; renderNameScreen(); });
+    }
+
+    function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+
+    renderNameScreen();
+</script>
+</body>
+</html>
