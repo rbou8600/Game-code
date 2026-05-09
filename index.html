@@ -10,33 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-<!-- Musique de fond -->
-<audio id="bgMusic" loop autoplay>
-    <source src="background-music.mp3" type="audio/mpeg">
-    Votre navigateur ne supporte pas la musique de fond.
-</audio>
-<button id="musicToggleBtn" style="position: fixed; bottom: 20px; right: 20px; background: #0f3460; color: white; border: none; border-radius: 50px; padding: 10px 16px; cursor: pointer; z-index: 999; font-size: 12px;">🔊 Musique ON</button>
 
-<script>
-    const music = document.getElementById('bgMusic');
-    const toggleBtn = document.getElementById('musicToggleBtn');
-    let musicPlaying = true;
-    
-    // Tentative de lecture automatique (souvent bloquée par navigateur)
-    music.play().catch(e => console.log("Auto-play bloqué, clic requis"));
-    
-    toggleBtn.addEventListener('click', () => {
-        if (musicPlaying) {
-            music.pause();
-            toggleBtn.innerHTML = '🔇 Musique OFF';
-            musicPlaying = false;
-        } else {
-            music.play();
-            toggleBtn.innerHTML = '🔊 Musique ON';
-            musicPlaying = true;
-        }
-    });
-</script>
         body {
             background: linear-gradient(145deg, #0c1a2f 0%, #071126 100%);
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
@@ -881,5 +855,46 @@
 
     renderNameScreen();
 </script>
+    <!-- ========== MUSIQUE DE FOND ========== -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8b6c6b6.mp3?filename=ambient-tech-113008.mp3" type="audio/mpeg">
+    </audio>
+    <button id="musicControl" style="position: fixed; bottom: 20px; right: 20px; background: #0f3460; color: white; border: 2px solid #e94560; border-radius: 40px; padding: 8px 18px; cursor: pointer; font-family: monospace; font-weight: bold; z-index: 9999; backdrop-filter: blur(4px); transition: 0.2s;">🔊 MUSIC ON</button>
+    
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicControl');
+        let isPlaying = false;
+        
+        // Tentative de lecture au chargement (souvent bloquée)
+        audio.volume = 0.3;  // Volume à 30% pour ne pas gêner
+        
+        // Lecture au premier clic partout (contournement navigateurs)
+        document.body.addEventListener('click', function initAudio() {
+            if (!isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    btn.innerHTML = '🔊 MUSIC ON';
+                }).catch(e => console.log('Auto-play bloqué'));
+                document.body.removeEventListener('click', initAudio);
+            }
+        }, { once: true });
+        
+        // Bouton on/off
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isPlaying) {
+                audio.pause();
+                btn.innerHTML = '🔇 MUSIC OFF';
+                isPlaying = false;
+            } else {
+                audio.play();
+                btn.innerHTML = '🔊 MUSIC ON';
+                isPlaying = true;
+            }
+        });
+    </script>
+</body>
+</html>
 </body>
 </html>
