@@ -10,7 +10,33 @@
             padding: 0;
             box-sizing: border-box;
         }
+<!-- Musique de fond -->
+<audio id="bgMusic" loop autoplay>
+    <source src="background-music.mp3" type="audio/mpeg">
+    Votre navigateur ne supporte pas la musique de fond.
+</audio>
+<button id="musicToggleBtn" style="position: fixed; bottom: 20px; right: 20px; background: #0f3460; color: white; border: none; border-radius: 50px; padding: 10px 16px; cursor: pointer; z-index: 999; font-size: 12px;">🔊 Musique ON</button>
 
+<script>
+    const music = document.getElementById('bgMusic');
+    const toggleBtn = document.getElementById('musicToggleBtn');
+    let musicPlaying = true;
+    
+    // Tentative de lecture automatique (souvent bloquée par navigateur)
+    music.play().catch(e => console.log("Auto-play bloqué, clic requis"));
+    
+    toggleBtn.addEventListener('click', () => {
+        if (musicPlaying) {
+            music.pause();
+            toggleBtn.innerHTML = '🔇 Musique OFF';
+            musicPlaying = false;
+        } else {
+            music.play();
+            toggleBtn.innerHTML = '🔊 Musique ON';
+            musicPlaying = true;
+        }
+    });
+</script>
         body {
             background: linear-gradient(145deg, #0c1a2f 0%, #071126 100%);
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
