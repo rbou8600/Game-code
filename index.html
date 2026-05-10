@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>JUNIOR QC ANALYST – Multilingual Training Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0c1a2f 0%, #071126 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+        }
+
+        .game-container {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .game-header {
+            background: #0a1c2f;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .game-title h2 {
+            color: white;
+            font-size: 1.5rem;
+            letter-spacing: -0.3px;
+            font-weight: 800;
+        }
+        .credit-line {
+            font-size: 0.7rem;
+            color: #bfd9ff;
+            font-style: italic;
+        }
+
+        .lang-selector {
+            display: flex;
+            gap: 8px;
+            background: #071126aa;
+            padding: 6px 12px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        .lang-btn {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .lang-btn.active {
+            background: #e94560;
+            border-color: #e94560;
+        }
+
+        .score-board {
+            background: #00000066;
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 6px 20px;
+            color: white;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .trainee-badge {
+            background: #e94560;
+            border-radius: 40px;
+            padding: 5px 18px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: white;
+        }
+
+        .game-body {
+            padding: 28px 30px 32px;
+        }
+
+        .name-screen {
+            text-align: center;
+            padding: 20px 10px;
+        }
+        .name-input-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+        }
+        .name-input-group input {
+            padding: 14px 22px;
+            font-size: 1rem;
+            width: 260px;
+            border: 2px solid #cddfe7;
+            border-radius: 60px;
+            text-align: center;
+        }
+        .start-btn {
+            background: #0f3460;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 32px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .start-btn:hover { background: #e94560; }
+
+        .scenario-card {
+            background: #f4f8fe;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border-left: 8px solid #e94560;
+            margin-bottom: 24px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .option-btn {
+            background: #f0f2f5;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 12px 18px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .option-btn:hover:not(:disabled) {
+            background: #e2e8f0;
+            transform: translateX(4px);
+        }
+
+        .feedback-panel {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 16px;
+            margin: 12px 0;
+            display: none;
+            border-left: 5px solid;
+        }
+        .feedback-correct { display: block; background: #e6f9ed; border-left-color: #2e7d32; }
+        .feedback-wrong { display: block; background: #fff0f0; border-left-color: #c62828; }
+        .doc-ref {
+            font-family: monospace;
+            background: #eef2ff;
+            padding: 6px 10px;
+            border-radius: 14px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+        .btn-next {
+            background: #0f3460;
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 260px;
+            display: block;
+            margin: 16px auto 0;
+            cursor: pointer;
+        }
+        .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result-area { text-align: center; padding: 20px; }
+        .restart-btn {
+            background: #e94560;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .score-summary {
+            background: #eef2ff;
+            padding: 20px;
+            border-radius: 28px;
+            margin-top: 20px;
+        }
+        .game-footer {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #6c7a8e;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+            .game-body { padding: 20px 16px; }
+            .game-header { flex-direction: column; align-items: stretch; }
+        }
+
+        /* ---- Profile Card ---- */
+        .profile-card-wrap { position:relative; border-radius:18px; overflow:hidden; max-width:640px; margin:0 auto 0; min-height:240px; background:#0d1117; }
+        .pc-bg { position:absolute; inset:0; }
+        .pc-grid { position:absolute; inset:0; background-image: linear-gradient(rgba(30,200,120,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(30,200,120,0.07) 1px,transparent 1px); background-size:28px 28px; }
+        .pc-corner { position:absolute; width:18px; height:18px; border-color:#1ec878; border-style:solid; opacity:0.55; }
+        .pc-tl{top:10px;left:10px;border-width:2px 0 0 2px;} .pc-tr{top:10px;right:10px;border-width:2px 2px 0 0;}
+        .pc-bl{bottom:10px;left:10px;border-width:0 0 2px 2px;} .pc-br{bottom:10px;right:10px;border-width:0 2px 2px 0;}
+        .pc-scanbar { position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(30,200,120,0.04) 50%,transparent 100%);animation:pcScan 4s ease-in-out infinite; }
+        @keyframes pcScan{0%,100%{opacity:0.3}50%{opacity:1}}
+        .pc-inner { position:relative; z-index:2; display:flex; align-items:stretch; min-height:240px; }
+        .pc-photo-col { width:180px; flex-shrink:0; position:relative; overflow:hidden; }
+        .pc-photo-col img { width:100%;height:100%;object-fit:cover;object-position:center top;display:block;filter:contrast(1.05) saturate(0.8); }
+        .pc-photo-overlay { position:absolute;inset:0;background:linear-gradient(to right,transparent 55%,#0d1117 100%),linear-gradient(to bottom,transparent 65%,#0d111788 100%); }
+        .pc-scanline { position:absolute;left:0;right:0;height:2px;background:rgba(30,200,120,0.35);animation:pcScanLine 3s linear infinite; }
+        @keyframes pcScanLine{0%{top:-2px}100%{top:100%}}
+        .pc-verified { position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(30,200,120,0.12);border:1px solid rgba(30,200,120,0.45);border-radius:20px;padding:3px 10px;font-size:9px;font-weight:600;letter-spacing:2px;color:#1ec878;white-space:nowrap; }
+        .pc-info-col { flex:1;padding:18px 20px 14px 16px;display:flex;flex-direction:column;justify-content:space-between; }
+        .pc-company-row { display:flex;align-items:center;gap:8px;margin-bottom:10px; }
+        .pc-dot { width:7px;height:7px;border-radius:50%;background:#1ec878;box-shadow:0 0 5px #1ec878;flex-shrink:0; }
+        .pc-company { font-size:10px;letter-spacing:2.5px;color:rgba(255,255,255,0.3);text-transform:uppercase; }
+        .pc-role { font-size:24px;font-weight:800;color:#fff;line-height:1.1;margin-bottom:3px;letter-spacing:0.5px; }
+        .pc-role-sub { font-size:9px;color:#1ec878;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px; }
+        .pc-divider { height:1px;background:linear-gradient(to right,rgba(30,200,120,0.3),transparent);margin-bottom:12px; }
+        .pc-stats { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px; }
+        .pc-stat { background:rgba(255,255,255,0.04);border:1px solid rgba(30,200,120,0.12);border-radius:8px;padding:7px 10px; }
+        .pc-stat-label { font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:2px; }
+        .pc-stat-val { font-size:15px;font-weight:800;color:#1ec878; }
+        .pc-tags { display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px; }
+        .pc-tag { font-size:9px;letter-spacing:1px;padding:3px 9px;border-radius:20px;border:1px solid rgba(30,200,120,0.2);color:rgba(255,255,255,0.4);text-transform:uppercase; }
+        .pc-tag.active { background:rgba(30,200,120,0.1);border-color:rgba(30,200,120,0.45);color:#1ec878; }
+        .pc-idrow { display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05); }
+        .pc-idcode { font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.2); }
+        .pc-status-row { display:flex;align-items:center;gap:5px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(30,200,120,0.7); }
+        .pc-pulse { width:7px;height:7px;border-radius:50%;background:#1ec878;animation:pcPulse 1.5s ease-in-out infinite;display:inline-block; }
+        @keyframes pcPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.35;transform:scale(0.65)}}
+        @media(max-width:500px){.pc-photo-col{width:130px;} .pc-role{font-size:18px;}}
+    </style>
+</head>
+<body>
+<div id="gameRoot"></div>
+
+<script>
+    // --------------------------------------------------------------
+    //  MULTILINGUAL CONTENT: EN / NL / FR
+    //  Based on official QC documents (Red/Yellow/Blue cards, Workflow, Phrasebook)
+    // --------------------------------------------------------------
+    const TRANSLATIONS = {
+        en: {
+            appTitle: "JUNIOR QC ANALYST",
+            credit: "made By Ramzi and His Loyal Friend DeepSeek",
+            enterName: "📋 Enter your name to begin",
+            namePlaceholder: "e.g., Ramzi, Maria",
+            startBtn: "▶ START ROUND (20 questions)",
+            scorePrefix: "Score",
+            traineeLabel: "👤",
+            submitBtn: "✅ SUBMIT ANSWER",
+            nextBtn: "➡ NEXT QUESTION",
+            finishBtn: "🏁 FINISH ROUND",
+            newRound: "⟳ NEW ROUND (20 questions)",
+            correctFeedback: "✅ CORRECT!",
+            wrongFeedback: "❌ WRONG ANSWER",
+            yourChoice: "Your choice",
+            correctAnswer: "Correct answer",
+            passMsg: "✅ QUALIFIED (PASS)",
+            failMsg: "⚠️ NEEDS FURTHER REVIEW",
+            finalScoreMsg: "had a score of",
+            upTo: "up to"
+        },
+        nl: {
+            appTitle: "JUNIOR QC ANALYST",
+            credit: "gemaakt door Ramzi en zijn loyale vriend DeepSeek",
+            enterName: "📋 Voer je naam in om te beginnen",
+            namePlaceholder: "bijv. Ramzi, Maria",
+            startBtn: "▶ START RONDE (20 vragen)",
+            scorePrefix: "Score",
+            traineeLabel: "👤",
+            submitBtn: "✅ ANTWOORD INDIENEN",
+            nextBtn: "➡ VOLGENDE VRAAG",
+            finishBtn: "🏁 RONDE VOLTOOIEN",
+            newRound: "⟳ NIEUWE RONDE (20 vragen)",
+            correctFeedback: "✅ JUIST!",
+            wrongFeedback: "❌ FOUT ANTWOORD",
+            yourChoice: "Jouw keuze",
+            correctAnswer: "Juiste antwoord",
+            passMsg: "✅ GESLAAGD (PASS)",
+            failMsg: "⚠️ VERDER BESTUDEREN NODIG",
+            finalScoreMsg: "heeft een score van",
+            upTo: "op"
+        },
+        fr: {
+            appTitle: "JUNIOR QC ANALYST",
+            credit: "créé par Ramzi et son fidèle ami DeepSeek",
+            enterName: "📋 Entrez votre nom pour commencer",
+            namePlaceholder: "ex: Ramzi, Maria",
+            startBtn: "▶ COMMENCER (20 questions)",
+            scorePrefix: "Score",
+            traineeLabel: "👤",
+            submitBtn: "✅ VALIDER LA RÉPONSE",
+            nextBtn: "➡ QUESTION SUIVANTE",
+            finishBtn: "🏁 TERMINER LE TOUR",
+            newRound: "⟳ NOUVEAU TOUR (20 questions)",
+            correctFeedback: "✅ CORRECT !",
+            wrongFeedback: "❌ MAUVAISE RÉPONSE",
+            yourChoice: "Votre choix",
+            correctAnswer: "Bonne réponse",
+            passMsg: "✅ QUALIFIÉ (RÉUSSI)",
+            failMsg: "⚠️ NÉCESSITE RÉVISION",
+            finalScoreMsg: "a obtenu un score de",
+            upTo: "sur"
+        }
+    };
+
+    // -------- 20 QUESTIONS (ENGLISH BASE) --------
+    const QUESTIONS_EN = [
+        { text: "Agent tells customer: 'You can go complain on Trustpilot, I don't care.' What card applies?", options: ["Red Card – guiding external complaint", "Yellow Card – poor attitude", "Blue Card – wrong closing", "No violation"], correct: 0, explanation: "RC 1.6: Actively encouraging external complaint. RED CARD.", docRef: "Red Card 1.6 – p.4-5" },
+        { text: "Customer asks for agent's ID. Agent refuses: 'That's private, I won't tell you'.", options: ["Yellow Card – refusing agent ID", "Red Card – privacy breach", "Blue Card – minor error", "Correct behaviour"], correct: 0, explanation: "CC 2.4.1: Refusing to provide agent ID. YELLOW CARD.", docRef: "Yellow Card 2.4.1 – p.7-8" },
+        { text: "Agent doesn't respond for 22 seconds (no 'please wait' or interaction). Which card?", options: ["Red Card – ignoring customer", "Yellow Card – empty field >15s no interaction", "Blue Card – slow response", "No violation"], correct: 1, explanation: "CC 2.3.1: No interaction >15 seconds. YELLOW CARD.", docRef: "Yellow Card 2.3.1 – p.7" },
+        { text: "Agent says: 'GOFO products are terrible, you're right.' What violation?", options: ["Red Card – malicious comments about GOFO", "Yellow Card – lack of empathy", "Blue Card – phrasebook error", "No issue"], correct: 0, explanation: "RC 1.4.1: Malicious comments about GOFO. RED CARD.", docRef: "Red Card 1.4.1 – p.3" },
+        { text: "Agent uses internal term 'BPO' with customer. According to quality rules?", options: ["Yellow Card – internal banned term", "Red Card – leaking info", "Blue Card – not a violation", "Allowed if customer works in logistics"], correct: 0, explanation: "CC 2.5.1: Internal jargon not understood by customer. YELLOW CARD.", docRef: "Yellow Card 2.5.1 – p.8" },
+        { text: "POD is valid (photo correct address/package). Customer WAS home but claims not received. Correct Phrasebook action?", options: ["File lost claim immediately", "Advise customer to contact seller (GOFO limited action)", "Ask customer to provide proof of absence", "Replace package for free"], correct: 1, explanation: "Situation 5Bb: POD valid, customer home → contact seller.", docRef: "Phrasebook 5Bb" },
+        { text: "Delivery failed because customer was NOT home (POD valid). What does customer need to provide?", options: ["Nothing, package will be returned", "Proof of absence (work receipt, travel ticket)", "Police report", "Signed delivery waiver"], correct: 1, explanation: "Situation 5Ba: Valid POD + not home → proof of absence needed.", docRef: "Phrasebook 5Ba" },
+        { text: "Package has no tracking update for 16 days. Workflow says:", options: ["Wait another week", "Submit urgent investigation", "Advise customer to contact seller (suspected lost)", "Send automatic replacement"], correct: 2, explanation: "Situation 6B: >14 days → suspected lost → contact seller.", docRef: "Workflow + Phrasebook 6B" },
+        { text: "What is the correct Phone opening phrase according to GOFO Phrasebook?", options: ["Hey who is this?", "Good day, you are speaking with Gofo Netherlands. Could you please provide your tracking number?", "GOFO service, what's your problem?", "Hello I need your order number fast"], correct: 1, explanation: "Standard opening: greeting + company + tracking number request.", docRef: "Phrasebook – Opening" },
+        { text: "Agent selects wrong ticket type (e.g. 'damaged' instead of 'lost'). Which violation?", options: ["Red Card", "Yellow Card – process error", "Blue Card – classification error", "No violation if corrected"], correct: 2, explanation: "BC 3.2.1: Wrong ticket classification. BLUE CARD.", docRef: "Blue Card 3.2.1 – p.12" },
+        { text: "Customer is abusive but agent remains neutral and shows understanding. Which phrasebook special situation matches?", options: ["Escalate immediately", "Hang up", "Show understanding, apologize, redirect to facts/process", "Transfer to legal"], correct: 2, explanation: "Emotional customer → calm, understand, redirect.", docRef: "Phrasebook – Emotional/abusive" },
+        { text: "According to scoring standard, how many points for ONE Yellow Card (CC) error?", options: ["-100 (auto-fail)", "-10 and ticket fails", "-50 points", "0 points but written warning"], correct: 1, explanation: "CC error: -10 points and ticket fails.", docRef: "Scoring table p.17" },
+        { text: "Agent shares warehouse address (GOFO facility) with customer. Which card?", options: ["Yellow Card", "Red Card – leaking internal info", "Blue Card – minor infraction", "Allowed if customer insists"], correct: 1, explanation: "RC 1.3.1: Leaking warehouse/DSP info. RED CARD.", docRef: "Red Card 1.3.1 – p.3" },
+        { text: "Customer refuses to provide additional info for investigation. Agent explains need & suggests contacting seller. Is this compliant?", options: ["No, must force customer", "Yes, using phrasebook refusal handling", "No, must accept customer without info", "Only via email"], correct: 1, explanation: "Refusal handling: explain, then offer seller contact.", docRef: "Phrasebook – Refusal handling" },
+        { text: "Customer mentions lawyer / legal action. Correct agent response?", options: ["Stay neutral, no legal commentary, register and forward", "Promise compensation", "End call immediately", "Offer to connect with manager"], correct: 0, explanation: "Neutral, no legal advice, register and forward.", docRef: "Phrasebook – Legal action" },
+        { text: "Delivery failed – address is wrong but CAN be changed (not yet delivered). What does workflow require?", options: ["Tell customer impossible", "Return to sender", "Update address in system and redeliver within 1-3 business days", "Ask customer to wait 10 days"], correct: 2, explanation: "Situation 4D: correctable address → update + redelivery 1-3 days.", docRef: "Workflow 4D" },
+        { text: "Agent uses phrase 'world-class service' and 'number one in Europe'. Which card?", options: ["Yellow Card – extreme/absolute banned terms", "Blue Card – minor exaggeration", "Red Card – fraud", "No violation"], correct: 0, explanation: "CC 2.5.2: Extreme/absolute forbidden terms.", docRef: "Yellow Card 2.5.2 – p.9" },
+        { text: "According to Blue Card section, missing to use standard closing formula is:", options: ["Yellow Card – minor", "Blue Card – wrong closing", "Red Card", "Only internal warning"], correct: 1, explanation: "BC 3.1.1: Incorrect opening/closing → BLUE CARD.", docRef: "Blue Card 3.1.1 – p.12" },
+        { text: "Customer wants to apply for compensation (lost package). Procedure says:", options: ["Immediately issue refund", "Advise contact seller first + provide loss declaration if seller fails", "Open police case", "Refuse any compensation"], correct: 1, explanation: "Situation 7: first seller, then loss declaration.", docRef: "Phrasebook Situation 7" },
+        { text: "Customer was home, but courier marked 'attempted - not home'. Agent confirms customer was home. What next?", options: ["Close ticket", "Start investigation, redelivery within 1-3 days + apology", "Tell customer to pick up at depot", "Ask for signature"], correct: 1, explanation: "Situation 4B: investigation + redelivery + apology.", docRef: "Phrasebook 4B" }
+    ];
+
+    // -------- DUTCH TRANSLATION (NL) --------
+    const QUESTIONS_NL = QUESTIONS_EN.map(q => {
+        const nlTexts = {
+            "Agent tells customer: 'You can go complain on Trustpilot, I don't care.' What card applies?": "Agent zegt tegen klant: 'Je kunt gaan klagen op Trustpilot, het kan me niet schelen.' Welke kaart is van toepassing?",
+            "Customer asks for agent's ID. Agent refuses: 'That's private, I won't tell you'.": "Klant vraagt om medewerkersnummer. Agent weigert: 'Dat is privé, geef ik niet.'",
+            "Agent doesn't respond for 22 seconds (no 'please wait' or interaction). Which card?": "Agent reageert 22 seconden niet (geen 'even geduld aub'). Welke kaart?",
+            "Agent says: 'GOFO products are terrible, you're right.' What violation?": "Agent zegt: 'GOFO-producten zijn verschrikkelijk, je hebt gelijk.' Welke overtreding?",
+            "Agent uses internal term 'BPO' with customer. According to quality rules?": "Agent gebruikt interne term 'BPO' tegen klant. Volgens kwaliteitsregels?",
+            "POD is valid (photo correct address/package). Customer WAS home but claims not received. Correct Phrasebook action?": "POD is geldig (foto correct adres/pakket). Klant WAS thuis maar beweert niet ontvangen. Juiste Phrasebook-actie?",
+            "Delivery failed because customer was NOT home (POD valid). What does customer need to provide?": "Levering mislukt omdat klant NIET thuis was (POD geldig). Wat moet klant leveren?",
+            "Package has no tracking update for 16 days. Workflow says:": "Pakket heeft 16 dagen geen tracking-update. Workflow zegt:",
+            "What is the correct Phone opening phrase according to GOFO Phrasebook?": "Wat is de juiste telefoon openingszin volgens GOFO Phrasebook?",
+            "Agent selects wrong ticket type (e.g. 'damaged' instead of 'lost'). Which violation?": "Agent selecteert verkeerd tickettype (bijv. 'beschadigd' i.p.v. 'verloren'). Welke overtreding?",
+            "Customer is abusive but agent remains neutral and shows understanding. Which phrasebook special situation matches?": "Klant is beledigend maar agent blijft neutraal en toont begrip. Welke speciale situatie uit phrasebook?",
+            "According to scoring standard, how many points for ONE Yellow Card (CC) error?": "Volgens scoringsstandaard, hoeveel punten voor één Yellow Card (CC) fout?",
+            "Agent shares warehouse address (GOFO facility) with customer. Which card?": "Agent deelt magazijnadres (GOFO) met klant. Welke kaart?",
+            "Customer refuses to provide additional info for investigation. Agent explains need & suggests contacting seller. Is this compliant?": "Klant weigert extra info voor onderzoek. Agent legt uit en stelt contact met verkoper voor. Conform?",
+            "Customer mentions lawyer / legal action. Correct agent response?": "Klant noemt advocaat / juridische stappen. Juiste reactie agent?",
+            "Delivery failed – address is wrong but CAN be changed (not yet delivered). What does workflow require?": "Levering mislukt – adres is fout maar KAN gewijzigd worden (nog niet geleverd). Wat vereist workflow?",
+            "Agent uses phrase 'world-class service' and 'number one in Europe'. Which card?": "Agent gebruikt zin 'wereldklasse service' en 'nummer één in Europa'. Welke kaart?",
+            "According to Blue Card section, missing to use standard closing formula is:": "Volgens Blue Card, het missen van standaard afsluiting is:",
+            "Customer wants to apply for compensation (lost package). Procedure says:": "Klant wil compensatie (verloren pakket). Procedure zegt:",
+            "Customer was home, but courier marked 'attempted - not home'. Agent confirms customer was home. What next?": "Klant was thuis, maar koerier markeerde 'poging gedaan - niet thuis'. Agent bevestigt klant was thuis. Wat nu?"
+        };
+        const nlOpts = q.options.map(opt => {
+            const map = {
+                "Red Card – guiding external complaint": "Rode Kaart – externe klacht aanmoedigen",
+                "Yellow Card – poor attitude": "Gele Kaart – slechte houding",
+                "Blue Card – wrong closing": "Blauwe Kaart – verkeerde afsluiting",
+                "No violation": "Geen overtreding",
+                "Yellow Card – refusing agent ID": "Gele Kaart – weigeren medewerkersnummer",
+                "Red Card – privacy breach": "Rode Kaart – privacyschending",
+                "Blue Card – minor error": "Blauwe Kaart – kleine fout",
+                "Correct behaviour": "Correct gedrag",
+                "Red Card – ignoring customer": "Rode Kaart – negeren klant",
+                "Yellow Card – empty field >15s no interaction": "Gele Kaart – leeg veld >15s geen interactie",
+                "Blue Card – slow response": "Blauwe Kaart – trage reactie",
+                "Red Card – malicious comments about GOFO": "Rode Kaart – kwaadaardige opmerkingen over GOFO",
+                "Yellow Card – lack of empathy": "Gele Kaart – gebrek aan empathie",
+                "Blue Card – phrasebook error": "Blauwe Kaart – phrasebook fout",
+                "No issue": "Geen probleem",
+                "Yellow Card – internal banned term": "Gele Kaart – interne verboden term",
+                "Red Card – leaking info": "Rode Kaart – informatie lekken",
+                "Blue Card – not a violation": "Blauwe Kaart – geen overtreding",
+                "Allowed if customer works in logistics": "Toegestaan als klant in logistiek werkt",
+                "File lost claim immediately": "Verloren claim direct indienen",
+                "Advise customer to contact seller (GOFO limited action)": "Adviseren contact op te nemen met verkoper (beperkte actie GOFO)",
+                "Ask customer to provide proof of absence": "Bewijs van afwezigheid vragen",
+                "Replace package for free": "Pakket gratis vervangen",
+                "Nothing, package will be returned": "Niets, pakket wordt retour gestuurd",
+                "Proof of absence (work receipt, travel ticket)": "Bewijs van afwezigheid (werkbon, reisticket)",
+                "Police report": "Politierapport",
+                "Signed delivery waiver": "Ondertekende leveringsvrijgave",
+                "Wait another week": "Nog een week wachten",
+                "Submit urgent investigation": "Dringend onderzoek indienen",
+                "Advise customer to contact seller (suspected lost)": "Adviseren contact op te nemen met verkoper (vermoedelijk verloren)",
+                "Send automatic replacement": "Automatische vervanging sturen",
+                "Hey who is this?": "Hey wie is dit?",
+                "Good day, you are speaking with Gofo Netherlands. Could you please provide your tracking number?": "Goedendag, u spreekt met Gofo Netherlands. Kunt u uw trackingnummer geven?",
+                "GOFO service, what's your problem?": "GOFO service, wat is uw probleem?",
+                "Hello I need your order number fast": "Hallo ik heb snel uw ordernummer nodig",
+                "Red Card": "Rode Kaart",
+                "Yellow Card – process error": "Gele Kaart – procesfout",
+                "Blue Card – classification error": "Blauwe Kaart – classificatiefout",
+                "No violation if corrected": "Geen overtreding indien gecorrigeerd",
+                "Escalate immediately": "Direct escaleren",
+                "Hang up": "Ophangen",
+                "Show understanding, apologize, redirect to facts/process": "Begrip tonen, verontschuldigen, terug naar feiten/proces",
+                "Transfer to legal": "Doorverbinden naar juridisch",
+                "-100 (auto-fail)": "-100 (automatisch zakken)",
+                "-10 and ticket fails": "-10 en ticket faalt",
+                "-50 points": "-50 punten",
+                "0 points but written warning": "0 punten maar schriftelijke waarschuwing",
+                "Yellow Card": "Gele Kaart",
+                "Red Card – leaking internal info": "Rode Kaart – interne info lekken",
+                "Blue Card – minor infraction": "Blauwe Kaart – kleine overtreding",
+                "Allowed if customer insists": "Toegestaan als klant aandringt",
+                "No, must force customer": "Nee, klant dwingen",
+                "Yes, using phrasebook refusal handling": "Ja, volgens phrasebook weigering afhandeling",
+                "No, must accept customer without info": "Nee, klant accepteren zonder info",
+                "Only via email": "Alleen via e-mail",
+                "Stay neutral, no legal commentary, register and forward": "Neutraal blijven, geen juridisch commentaar, registreren en doorsturen",
+                "Promise compensation": "Compensatie beloven",
+                "End call immediately": "Gesprek direct beëindigen",
+                "Offer to connect with manager": "Aanbieden door te verbinden met manager",
+                "Tell customer impossible": "Klant vertellen onmogelijk",
+                "Return to sender": "Retour afzender",
+                "Update address in system and redeliver within 1-3 business days": "Adres updaten in systeem en herleveren binnen 1-3 werkdagen",
+                "Ask customer to wait 10 days": "Klant vragen 10 dagen te wachten",
+                "Yellow Card – extreme/absolute banned terms": "Gele Kaart – extreme/absolute verboden termen",
+                "Blue Card – minor exaggeration": "Blauwe Kaart – lichte overdrijving",
+                "Red Card – fraud": "Rode Kaart – fraude",
+                "Yellow Card – minor": "Gele Kaart – klein",
+                "Blue Card – wrong closing": "Blauwe Kaart – verkeerde afsluiting",
+                "Only internal warning": "Alleen interne waarschuwing",
+                "Immediately issue refund": "Direct terugbetaling uitvoeren",
+                "Advise contact seller first + provide loss declaration if seller fails": "Adviseren eerst verkoper te contacteren + verklaring van verlies als verkoper faalt",
+                "Open police case": "Politiezaak openen",
+                "Refuse any compensation": "Alle compensatie weigeren",
+                "Close ticket": "Ticket sluiten",
+                "Start investigation, redelivery within 1-3 days + apology": "Onderzoek starten, herlevering binnen 1-3 dagen + excuses",
+                "Tell customer to pick up at depot": "Klant vertellen op te halen bij depot",
+                "Ask for signature": "Handtekening vragen"
+            };
+            return map[opt] || opt;
+        });
+        return {
+            text: nlTexts[q.text] || q.text,
+            options: nlOpts,
+            correct: q.correct,
+            explanation: q.explanation,
+            docRef: q.docRef
+        };
+    });
+
+    // -------- FRENCH TRANSLATION (FR) --------
+    const QUESTIONS_FR = QUESTIONS_EN.map(q => {
+        const frTexts = {
+            "Agent tells customer: 'You can go complain on Trustpilot, I don't care.' What card applies?": "L'agent dit au client : 'Vous pouvez aller vous plaindre sur Trustpilot, je m'en fiche.' Quelle carte s'applique ?",
+            "Customer asks for agent's ID. Agent refuses: 'That's private, I won't tell you'.": "Le client demande l'identifiant de l'agent. L'agent refuse : 'C'est privé, je ne vous le dirai pas.'",
+            "Agent doesn't respond for 22 seconds (no 'please wait' or interaction). Which card?": "L'agent ne répond pas pendant 22 secondes (pas de 'patientez' ni d'interaction). Quelle carte ?",
+            "Agent says: 'GOFO products are terrible, you're right.' What violation?": "L'agent dit : 'Les produits GOFO sont terribles, vous avez raison.' Quelle infraction ?",
+            "Agent uses internal term 'BPO' with customer. According to quality rules?": "L'agent utilise le terme interne 'BPO' avec le client. Selon les règles qualité ?",
+            "POD is valid (photo correct address/package). Customer WAS home but claims not received. Correct Phrasebook action?": "Le POD est valide (photo adresse/colis correcte). Le client ÉTAIT chez lui mais dit ne pas avoir reçu. Bonne action Phrasebook ?",
+            "Delivery failed because customer was NOT home (POD valid). What does customer need to provide?": "Livraison échouée car le client n'ÉTAIT PAS chez lui (POD valide). Que doit fournir le client ?",
+            "Package has no tracking update for 16 days. Workflow says:": "Colis sans mise à jour de suivi depuis 16 jours. Workflow dit :",
+            "What is the correct Phone opening phrase according to GOFO Phrasebook?": "Quelle est la phrase d'ouverture téléphonique correcte selon le Phrasebook GOFO ?",
+            "Agent selects wrong ticket type (e.g. 'damaged' instead of 'lost'). Which violation?": "L'agent sélectionne un mauvais type de ticket (ex: 'endommagé' au lieu de 'perdu'). Quelle infraction ?",
+            "Customer is abusive but agent remains neutral and shows understanding. Which phrasebook special situation matches?": "Le client est injurieux mais l'agent reste neutre et montre de la compréhension. Quelle situation spéciale du phrasebook ?",
+            "According to scoring standard, how many points for ONE Yellow Card (CC) error?": "Selon le barème, combien de points pour une erreur Carton Jaune (CC) ?",
+            "Agent shares warehouse address (GOFO facility) with customer. Which card?": "L'agent partage l'adresse de l'entrepôt (GOFO) avec le client. Quelle carte ?",
+            "Customer refuses to provide additional info for investigation. Agent explains need & suggests contacting seller. Is this compliant?": "Le client refuse de fournir des infos supplémentaires pour l'enquête. L'agent explique le besoin et suggère de contacter le vendeur. Est-ce conforme ?",
+            "Customer mentions lawyer / legal action. Correct agent response?": "Le client mentionne un avocat / des poursuites judiciaires. Bonne réponse de l'agent ?",
+            "Delivery failed – address is wrong but CAN be changed (not yet delivered). What does workflow require?": "Livraison échouée – l'adresse est erronée mais PEUT être modifiée (pas encore livré). Que demande le workflow ?",
+            "Agent uses phrase 'world-class service' and 'number one in Europe'. Which card?": "L'agent utilise l'expression 'service de classe mondiale' et 'numéro un en Europe'. Quelle carte ?",
+            "According to Blue Card section, missing to use standard closing formula is:": "Selon la section Carton Bleu, ne pas utiliser la formule de clôture standard est :",
+            "Customer wants to apply for compensation (lost package). Procedure says:": "Le client veut demander une compensation (colis perdu). La procédure dit :",
+            "Customer was home, but courier marked 'attempted - not home'. Agent confirms customer was home. What next?": "Le client était chez lui, mais le livreur a marqué 'tentative - pas chez lui'. L'agent confirme que le client était chez lui. Ensuite ?"
+        };
+        const frOpts = q.options.map(opt => {
+            const map = {
+                "Red Card – guiding external complaint": "Carton Rouge – encouragement plainte externe",
+                "Yellow Card – poor attitude": "Carton Jaune – mauvaise attitude",
+                "Blue Card – wrong closing": "Carton Bleu – mauvaise clôture",
+                "No violation": "Pas d'infraction",
+                "Yellow Card – refusing agent ID": "Carton Jaune – refus identifiant agent",
+                "Red Card – privacy breach": "Carton Rouge – violation vie privée",
+                "Blue Card – minor error": "Carton Bleu – erreur mineure",
+                "Correct behaviour": "Comportement correct",
+                "Red Card – ignoring customer": "Carton Rouge – ignorer client",
+                "Yellow Card – empty field >15s no interaction": "Carton Jaune – vide >15s sans interaction",
+                "Blue Card – slow response": "Carton Bleu – réponse lente",
+                "Red Card – malicious comments about GOFO": "Carton Rouge – commentaires malveillants GOFO",
+                "Yellow Card – lack of empathy": "Carton Jaune – manque d'empathie",
+                "Blue Card – phrasebook error": "Carton Bleu – erreur phrasebook",
+                "No issue": "Pas de problème",
+                "Yellow Card – internal banned term": "Carton Jaune – terme interne interdit",
+                "Red Card – leaking info": "Carton Rouge – fuite d'infos",
+                "Blue Card – not a violation": "Carton Bleu – pas une infraction",
+                "Allowed if customer works in logistics": "Autorisé si client travaille en logistique",
+                "File lost claim immediately": "Déposer réclamation perte immédiate",
+                "Advise customer to contact seller (GOFO limited action)": "Conseiller au client de contacter le vendeur (GOFO action limitée)",
+                "Ask customer to provide proof of absence": "Demander une preuve d'absence",
+                "Replace package for free": "Remplacer le colis gratuitement",
+                "Nothing, package will be returned": "Rien, colis sera retourné",
+                "Proof of absence (work receipt, travel ticket)": "Preuve d'absence (reçu travail, billet)",
+                "Police report": "Dépôt de plainte",
+                "Signed delivery waiver": "Décharge de livraison signée",
+                "Wait another week": "Attendre une semaine de plus",
+                "Submit urgent investigation": "Soumettre enquête urgente",
+                "Advise customer to contact seller (suspected lost)": "Conseiller client de contacter vendeur (perte suspectée)",
+                "Send automatic replacement": "Envoyer remplacement auto",
+                "Hey who is this?": "Bonjour qui est-ce ?",
+                "Good day, you are speaking with Gofo Netherlands. Could you please provide your tracking number?": "Bonjour, vous êtes en ligne avec Gofo Netherlands. Pouvez-vous fournir votre numéro de suivi ?",
+                "GOFO service, what's your problem?": "Service GOFO, quel est votre problème ?",
+                "Hello I need your order number fast": "Bonjour j'ai besoin rapidement de votre numéro de commande",
+                "Red Card": "Carton Rouge",
+                "Yellow Card – process error": "Carton Jaune – erreur processus",
+                "Blue Card – classification error": "Carton Bleu – erreur classification",
+                "No violation if corrected": "Pas d'infraction si corrigé",
+                "Escalate immediately": "Escalader immédiatement",
+                "Hang up": "Raccrocher",
+                "Show understanding, apologize, redirect to facts/process": "Montrer compréhension, s'excuser, recentrer sur faits/processus",
+                "Transfer to legal": "Transférer au juridique",
+                "-100 (auto-fail)": "-100 (échec auto)",
+                "-10 and ticket fails": "-10 et ticket non conforme",
+                "-50 points": "-50 points",
+                "0 points but written warning": "0 point mais avertissement écrit",
+                "Yellow Card": "Carton Jaune",
+                "Red Card – leaking internal info": "Carton Rouge – fuite infos internes",
+                "Blue Card – minor infraction": "Carton Bleu – infraction mineure",
+                "Allowed if customer insists": "Autorisé si client insiste",
+                "No, must force customer": "Non, faut forcer le client",
+                "Yes, using phrasebook refusal handling": "Oui, gestion du refus par phrasebook",
+                "No, must accept customer without info": "Non, faut accepter client sans info",
+                "Only via email": "Uniquement par email",
+                "Stay neutral, no legal commentary, register and forward": "Rester neutre, pas de commentaire juridique, enregistrer et transférer",
+                "Promise compensation": "Promettre une compensation",
+                "End call immediately": "Fin appel immédiat",
+                "Offer to connect with manager": "Proposer de transférer au manager",
+                "Tell customer impossible": "Dire au client impossible",
+                "Return to sender": "Retour à l'expéditeur",
+                "Update address in system and redeliver within 1-3 business days": "Mettre à jour adresse système et relivrer sous 1-3 jours ouvrés",
+                "Ask customer to wait 10 days": "Demander au client d'attendre 10 jours",
+                "Yellow Card – extreme/absolute banned terms": "Carton Jaune – termes extrêmes/absolus interdits",
+                "Blue Card – minor exaggeration": "Carton Bleu – légère exagération",
+                "Red Card – fraud": "Carton Rouge – fraude",
+                "Yellow Card – minor": "Carton Jaune – mineur",
+                "Blue Card – wrong closing": "Carton Bleu – mauvaise clôture",
+                "Only internal warning": "Avertissement interne uniquement",
+                "Immediately issue refund": "Effectuer remboursement immédiat",
+                "Advise contact seller first + provide loss declaration if seller fails": "Conseiller contacter vendeur d'abord + fournir déclaration perte si vendeur échoue",
+                "Open police case": "Ouvrir une enquête police",
+                "Refuse any compensation": "Refuser toute compensation",
+                "Close ticket": "Fermer le ticket",
+                "Start investigation, redelivery within 1-3 days + apology": "Démarrer enquête, relivraison sous 1-3 jours + excuses",
+                "Tell customer to pick up at depot": "Dire au client d'aller au dépôt",
+                "Ask for signature": "Demander signature"
+            };
+            return map[opt] || opt;
+        });
+        return {
+            text: frTexts[q.text] || q.text,
+            options: frOpts,
+            correct: q.correct,
+            explanation: q.explanation,
+            docRef: q.docRef
+        };
+    });
+
+    // ---- Game state ----
+    let currentLang = "en";
+    let currentQuestions = [...QUESTIONS_EN];
+    let traineeName = "";
+    let roundActive = false;
+    let currentIndex = 0;
+    let score = 0;
+    let answered = false;
+    let selectedOpt = null;
+    let roundQuestions = [];
+
+    const root = document.getElementById("gameRoot");
+
+    function getLangText(key) { return TRANSLATIONS[currentLang][key] || key; }
+
+    function renderNameScreen() {
+        root.innerHTML = `
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-title"><h2>${getLangText("appTitle")}</h2><div class="credit-line">${getLangText("credit")}</div></div>
+                    <div class="lang-selector">
+                        <button class="lang-btn ${currentLang === "en" ? "active" : ""}" data-lang="en">🇬🇧 EN</button>
+                        <button class="lang-btn ${currentLang === "nl" ? "active" : ""}" data-lang="nl">🇳🇱 NL</button>
+                        <button class="lang-btn ${currentLang === "fr" ? "active" : ""}" data-lang="fr">🇫🇷 FR</button>
+                    </div>
+                </div>
+                <div class="game-body name-screen">
+                    <div class="profile-card-wrap">
+                        <div class="pc-bg"><div class="pc-grid"></div><div class="pc-corner pc-tl"></div><div class="pc-corner pc-tr"></div><div class="pc-corner pc-bl"></div><div class="pc-corner pc-br"></div><div class="pc-scanbar"></div></div>
+                        <div class="pc-inner">
+                            <div class="pc-photo-col">
+                                <img src="data:image/jpeg;base64,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" alt="QC Analyst">
+                                <div class="pc-photo-overlay"></div><div class="pc-scanline"></div>
+                                <div class="pc-verified">&#10003; VERIFIED AGENT</div>
+                            </div>
+                            <div class="pc-info-col">
+                                <div class="pc-company-row"><span class="pc-dot"></span><span class="pc-company">WEIHU ONLINE &middot; QC DIVISION</span></div>
+                                <div class="pc-role">Junior QC<br>Analyst</div>
+                                <div class="pc-role-sub">QUALITY CONTROL &middot; TRAINING PROGRAM</div>
+                                <div class="pc-divider"></div>
+                                <div class="pc-stats">
+                                    <div class="pc-stat"><div class="pc-stat-label">Program</div><div class="pc-stat-val">Level 1</div></div>
+                                    <div class="pc-stat"><div class="pc-stat-label">Status</div><div class="pc-stat-val">Active</div></div>
+                                    <div class="pc-stat"><div class="pc-stat-label">Languages</div><div class="pc-stat-val">5 Lang</div></div>
+                                    <div class="pc-stat"><div class="pc-stat-label">Domain</div><div class="pc-stat-val">CS &middot; QA</div></div>
+                                </div>
+                                <div class="pc-tags"><span class="pc-tag active">QC Review</span><span class="pc-tag active">CS Training</span><span class="pc-tag">Audit</span><span class="pc-tag">Multi-lang</span></div>
+                                <div class="pc-idrow"><span class="pc-idcode">ID: WH-QC-2026-001</span><span class="pc-status-row"><span class="pc-pulse"></span>&nbsp;Online</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 style="margin-top:24px;">${getLangText("enterName")}</h3>
+                    <div class="name-input-group">
+                        <input type="text" id="traineeNameInput" placeholder="${getLangText("namePlaceholder")}">
+                        <button class="start-btn" id="startGameBtn">${getLangText("startBtn")}</button>
+                    </div>
+                    <div class="game-footer">🔴 Red Card &bull; 🟡 Yellow Card &bull; 🔵 Blue Card &bull; Workflow &bull; Phrasebook</div>
+                </div>
+            </div>
+        `;
+        document.querySelectorAll(".lang-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                currentLang = btn.dataset.lang;
+                if (currentLang === "en") currentQuestions = [...QUESTIONS_EN];
+                else if (currentLang === "nl") currentQuestions = [...QUESTIONS_NL];
+                else currentQuestions = [...QUESTIONS_FR];
+                renderNameScreen();
+            });
+        });
+        document.getElementById("startGameBtn").addEventListener("click", () => {
+            let name = document.getElementById("traineeNameInput").value.trim();
+            traineeName = name || "Trainee";
+            roundQuestions = [...currentQuestions];
+            for (let i = roundQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [roundQuestions[i], roundQuestions[j]] = [roundQuestions[j], roundQuestions[i]];
+            }
+            currentIndex = 0; score = 0; answered = false; selectedOpt = null; roundActive = true;
+            renderQuestion();
+        });
+    }
+
+    function renderQuestion() {
+        if (!roundActive || currentIndex >= roundQuestions.length) { finishRound(); return; }
+        const q = roundQuestions[currentIndex];
+        const optsHtml = q.options.map((opt, idx) => `<button class="option-btn" data-opt="${idx}">${String.fromCharCode(65+idx)}. ${escapeHtml(opt)}</button>`).join('');
+        root.innerHTML = `
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-title"><h2>${getLangText("appTitle")}</h2><div class="credit-line">${getLangText("credit")}</div></div>
+                    <div class="trainee-badge">${getLangText("traineeLabel")} ${escapeHtml(traineeName)}</div>
+                    <div class="score-board">⭐ ${score}/${currentIndex}</div>
+                </div>
+                <div class="game-body">
+                    <div class="scenario-card">📌 <strong>${currentIndex+1}/${roundQuestions.length}</strong><br>${escapeHtml(q.text)}</div>
+                    <div class="options-list" id="optsList">${optsHtml}</div>
+                    <div id="fbArea" class="feedback-panel" style="display:none;"></div>
+                    <button class="btn-next" id="nextBtn" disabled>${getLangText("submitBtn")}</button>
+                    <div class="game-footer">🔍 Select an answer, then validate.</div>
+                </div>
+            </div>
+        `;
+        let selected = null;
+        document.querySelectorAll(".option-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (answered) return;
+                document.querySelectorAll(".option-btn").forEach(b => { b.style.background = "#f0f2f5"; });
+                btn.style.background = "#c1e0ff";
+                selected = parseInt(btn.dataset.opt);
+                document.getElementById("nextBtn").disabled = false;
+            });
+        });
+        document.getElementById("nextBtn").addEventListener("click", () => {
+            if (answered || selected === undefined) return;
+            const qq = roundQuestions[currentIndex];
+            const isCorrect = (selected === qq.correct);
+            if (isCorrect) score++;
+            const fbDiv = document.getElementById("fbArea");
+            const correctLetter = String.fromCharCode(65+qq.correct);
+            if (isCorrect) {
+                fbDiv.innerHTML = `<strong>${getLangText("correctFeedback")}</strong><br>${escapeHtml(qq.explanation)}<div class="doc-ref">📄 ${escapeHtml(qq.docRef)}</div>`;
+                fbDiv.className = "feedback-panel feedback-correct";
+            } else {
+                fbDiv.innerHTML = `<strong>${getLangText("wrongFeedback")}</strong><br>${getLangText("yourChoice")}: ${String.fromCharCode(65+selected)}. ${escapeHtml(qq.options[selected])}<br>${getLangText("correctAnswer")}: ${correctLetter}. ${escapeHtml(qq.options[qq.correct])}<br><br>${escapeHtml(qq.explanation)}<div class="doc-ref">📄 ${escapeHtml(qq.docRef)}</div>`;
+                fbDiv.className = "feedback-panel feedback-wrong";
+            }
+            fbDiv.style.display = "block";
+            document.querySelectorAll(".option-btn").forEach((btn, idx) => {
+                btn.disabled = true;
+                if (idx === qq.correct) { btn.style.background = "#c8f0d1"; }
+                if (!isCorrect && idx === selected && idx !== qq.correct) { btn.style.background = "#ffdddd"; }
+            });
+            answered = true;
+            const nextBtn = document.getElementById("nextBtn");
+            nextBtn.innerText = (currentIndex+1 === roundQuestions.length) ? getLangText("finishBtn") : getLangText("nextBtn");
+            const newNext = nextBtn.cloneNode(true);
+            nextBtn.parentNode.replaceChild(newNext, nextBtn);
+            newNext.addEventListener("click", () => {
+                if (currentIndex+1 >= roundQuestions.length) finishRound();
+                else { currentIndex++; answered = false; selected = undefined; renderQuestion(); }
+            });
+        });
+    }
+
+    function finishRound() {
+        const total = roundQuestions.length;
+        root.innerHTML = `
+            <div class="game-container">
+                <div class="game-header"><div class="game-title"><h2>${getLangText("appTitle")}</h2><div class="credit-line">${getLangText("credit")}</div></div></div>
+                <div class="game-body result-area">
+                    <div class="score-summary">🎯 <strong>${escapeHtml(traineeName)}</strong> ${getLangText("finalScoreMsg")} <strong style="font-size:2rem;">${score}</strong> ${getLangText("upTo")} ${total}.<br>(${score}/${total} · ${Math.round(score/total*100)}%)<br>${score >= 15 ? getLangText("passMsg") : getLangText("failMsg")}</div>
+                    <button class="restart-btn" id="restartBtn">${getLangText("newRound")}</button>
+                </div>
+                <div class="game-footer">JUNIOR QC ANALYST • multilingual</div>
+            </div>
+        `;
+        document.getElementById("restartBtn").addEventListener("click", () => { roundActive = false; renderNameScreen(); });
+    }
+
+    function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+
+    renderNameScreen();
+</script>
+</body>
+</html>
